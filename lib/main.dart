@@ -42,6 +42,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late WebViewController _controller;
   bool _isLoading = false;
   bool _hasError = false;
+  String _defaultTitle = 'Gotcha!';
+  String _title = 'Gotcha!';
 
   @override
   void initState() {
@@ -93,8 +95,11 @@ class _MyHomePageState extends State<MyHomePage> {
           onHttpError: (HttpResponseError error) {
             debugPrint('Error occurred on page: ${error.response?.statusCode}');
           },
-          onUrlChange: (UrlChange change) {
+          onUrlChange: (UrlChange change) async {
             debugPrint('url change to ${change.url}');
+            final title = await _controller.getTitle() ?? _defaultTitle;
+            print("tag-title:${title}");
+            setState(() => _title = title);
           },
           onHttpAuthRequest: (HttpAuthRequest request) {
             debugPrint('onHttpAuthRequest');
@@ -116,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[50],
-        title: Text('Gotcha!'),
+        title: Text(_title),
         leading: IconButton(
           onPressed: () async {
             final canPop = await _controller.canGoBack();
